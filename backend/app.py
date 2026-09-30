@@ -1,8 +1,17 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-
-from arbitrage import ArbitrageError, bellman_ford_arbitrage, calculate_profit
-
+try:
+    from backend.arbitrage import (
+        ArbitrageError,
+        bellman_ford_arbitrage,
+        calculate_profit,
+    )
+except ModuleNotFoundError:
+    from arbitrage import (
+        ArbitrageError,
+        bellman_ford_arbitrage,
+        calculate_profit,
+    )
 app = Flask(__name__, static_folder="../frontend", static_url_path="")
 CORS(app)
 

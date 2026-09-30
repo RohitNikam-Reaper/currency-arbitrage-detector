@@ -80,7 +80,7 @@ def bellman_ford_arbitrage(
         changed = False
         for source_node, target_node, weight in edges:
             candidate = distance[source_node] + weight
-            if candidate < distance[target_node] - 1e-12:
+            if candidate < distance[target_node] - 1e-9:
                 distance[target_node] = candidate
                 predecessor[target_node] = source_node
                 updated = target_node
@@ -90,7 +90,7 @@ def bellman_ford_arbitrage(
 
     cycle_node = None
     for source_node, target_node, weight in edges:
-        if distance[source_node] + weight < distance[target_node] - 1e-12:
+        if distance[source_node] + weight < distance[target_node] - 1e-9:
             predecessor[target_node] = source_node
             cycle_node = target_node
             break
@@ -123,7 +123,7 @@ def bellman_ford_arbitrage(
     product = calculate_cycle_product(cycle, rates)
 
     return {
-        "arbitrage_found": product > 1.0 + 1e-12,
+        "arbitrage_found": product > 1.0 + 1e-9,
         "cycle": cycle,
         "cycle_rates": [
             rates[source_node][target_node]
