@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Currency Arbitrage Detector</title>
+
+    <meta
+        name="description"
+        content="Currency arbitrage detection using the Bellman-Ford negative-cycle algorithm."
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="site-header">
+        <div class="container header-content">
+
+            <div class="brand">
+                <div class="brand-logo">
+    <img
+        src="assets/arbitrage-logo.png"
+        alt="Currency Arbitrage Detector logo"
+    >
+</div>
+
+                <div>
+                    <h1>Currency Arbitrage Detector</h1>
+                    <p>Bellman-Ford Negative Cycle Analysis</p>
+                </div>
+            </div>
+
+<div class="header-actions">
+
+    <div class="system-status">
+        <span class="status-dot"></span>
+        <span>SYSTEM READY</span>
+    </div>
+
+    <button
+        class="theme-toggle"
+        id="themeToggle"
+        type="button"
+        aria-label="Switch theme"
+    >
+        <span class="theme-icon" id="themeIcon">☀</span>
+        <span id="themeText">Light</span>
+    </button>
+
+</div>
+
+        </div>
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero">
+            <div class="container">
+
+              <div class="project-title">
+    CURRENCY ARBITRAGE DETECTOR
+</div>
+
+<div class="hero-badge">
+    GRAPH ALGORITHM • FINANCIAL ANALYTICS
+</div>
+
+<h2>
+    Detect hidden arbitrage
+    <span>opportunities.</span>
+</h2>
+
+                <p class="hero-description">
+                    Analyze currency exchange networks using the
+                    Bellman-Ford algorithm and negative-cycle detection.
+                </p>
+
+                <div class="formula-card">
+
+                    <div class="formula-label">
+                        MATHEMATICAL TRANSFORMATION
+                    </div>
+
+                    <div class="formula">
+                        w(u,v) = −log(exchange rate)
+                    </div>
+
+                    <p>
+                        A negative cycle in the transformed graph
+                        represents a potential arbitrage opportunity.
+                    </p>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section class="dashboard-section">
+            <div class="container">
+
+                <!-- STAT CARDS -->
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <div class="stat-label">CURRENCIES</div>
+                        <div class="stat-value" id="currencyCount">0</div>
+                        <div class="stat-description">
+                            Active vertices
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">EXCHANGE PAIRS</div>
+                        <div class="stat-value" id="pairCount">0</div>
+                        <div class="stat-description">
+                            Directed edges
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">NEGATIVE CYCLE</div>
+                        <div
+                            class="stat-value status-neutral"
+                            id="cycleStatus"
+                        >
+                            —
+                        </div>
+                        <div class="stat-description">
+                            Bellman-Ford result
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">POTENTIAL RETURN</div>
+                        <div class="stat-value" id="returnValue">
+                            0.00%
+                        </div>
+                        <div class="stat-description">
+                            Before transaction costs
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- MAIN WORKSPACE -->
+
+                <div class="workspace-grid">
+
+                    <!-- INPUT PANEL -->
+
+                    <section class="panel input-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <span class="section-kicker">
+                                    INPUT
+                                </span>
+
+                                <h3>
+                                    Exchange Rate Matrix
+                                </h3>
+
+                                <p>
+                                    Enter the directed exchange rates
+                                    used to construct the graph.
+                                </p>
+                            </div>
+
+                            <span class="panel-number">
+                                01
+                            </span>
+
+                        </div>
+
+
+                        <div class="matrix-wrapper">
+
+                            <table class="rate-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>FROM / TO</th>
+                                        <th>USD</th>
+                                        <th>GBP</th>
+                                        <th>INR</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <tr>
+                                        <th>USD</th>
+                                        <td class="diagonal">1.00</td>
+                                        <td>
+                                            <input type="number" step="0.000001" value="0.78" data-from="USD" data-to="GBP">
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.000001" value="83.20" data-from="USD" data-to="INR">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>GBP</th>
+                                        <td>
+                                            <input type="number" step="0.000001" value="1.28" data-from="GBP" data-to="USD">
+                                        </td>
+                                        <td class="diagonal">1.00</td>
+                                        <td>
+                                            <input type="number" step="0.000001" value="106.00" data-from="GBP" data-to="INR">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>INR</th>
+                                        <td>
+                                            <input type="number" step="0.000001" value="0.0123" data-from="INR" data-to="USD">
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.000001" value="0.0094" data-from="INR" data-to="GBP">
+                                        </td>
+                                        <td class="diagonal">1.00</td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <!-- INPUT CONTROLS -->
+
+                        <div class="controls-grid">
+
+                            <div class="form-group">
+
+                                <label for="startCurrency">
+                                    Starting Currency
+                                </label>
+
+                                <select id="startCurrency">
+                                    <option value="USD">USD</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="INR">INR</option>
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="amount">
+                                    Starting Amount
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="amount"
+                                    value="1000"
+                                    min="0"
+                                    step="0.01"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- BUTTONS -->
+
+                        <div class="action-buttons">
+
+                            <button
+                                class="btn btn-secondary"
+                                id="demoButton"
+                                type="button"
+                            >
+                                Load Demo Data
+                            </button>
+
+                            <button
+                                class="btn btn-secondary"
+                                id="clearButton"
+                                type="button"
+                            >
+                                Clear
+                            </button>
+
+                            <button
+                                class="btn btn-secondary"
+                                id="validationButton"
+                                type="button"
+                            >
+                                Validation Rules
+                            </button>
+
+                            <button
+                                class="btn btn-secondary"
+                                id="testSuiteButton"
+                                type="button"
+                            >
+                                Run Test Cases
+                            </button>
+
+                            <button
+                                class="btn btn-secondary"
+                                id="liveValidationButton"
+                                type="button"
+                            >
+                                Live Validation
+                            </button>
+
+                            <button
+                                class="btn btn-primary"
+                                id="detectButton"
+                                type="button"
+                            >
+                                Detect Arbitrage
+                                <span>→</span>
+                            </button>
+
+                        </div>
+
+                        <div class="quality-tools">
+
+                            <div
+                                class="quality-panel validation-panel hidden"
+                                id="validationPanel"
+                            >
+                                <div class="quality-panel-title">Input Validation Rules</div>
+                                <div class="quality-rule-grid">
+                                    <span>Exchange rates</span>
+                                    <strong>&gt; 0</strong>
+                                    <span>Starting amount</span>
+                                    <strong>&gt; 0</strong>
+                                    <span>Empty / invalid values</span>
+                                    <strong>Rejected</strong>
+                                </div>
+                            </div>
+
+                            <div
+                                class="quality-panel live-validation-panel hidden"
+                                id="liveValidationPanel"
+                                aria-live="polite"
+                            >
+                                <div class="quality-panel-title">Live Input Status</div>
+                                <div id="liveValidationContent"></div>
+                            </div>
+
+                            <div
+                                class="quality-panel test-results-panel hidden"
+                                id="testResultsPanel"
+                            ></div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- RESULT PANEL -->
+
+                    <section class="panel result-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <span class="section-kicker">
+                                    ANALYSIS
+                                </span>
+
+                                <h3>
+                                    Detection Result
+                                </h3>
+
+                                <p>
+                                    Bellman-Ford analysis will appear here.
+                                </p>
+                            </div>
+
+                            <span class="panel-number">
+                                02
+                            </span>
+
+                        </div>
+
+
+                        <!-- RESULT STATE -->
+
+                        <div
+                            class="result-state"
+                            id="resultState"
+                        >
+
+                            <div class="result-icon">
+                                ?
+                            </div>
+
+                            <h4>
+                                Awaiting Analysis
+                            </h4>
+
+                            <p>
+                                Enter exchange rates and run the
+                                arbitrage detector.
+                            </p>
+
+                        </div>
+
+
+                        <!-- CYCLE -->
+
+                        <div
+                            class="cycle-section hidden"
+                            id="cycleSection"
+                        >
+
+                            <div class="result-heading">
+                                Detected Cycle
+                            </div>
+
+                            <div
+                                class="cycle-display"
+                                id="cycleDisplay"
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <!-- RESULT METRICS -->
+
+                        <div class="result-metrics">
+
+                            <div class="result-metric">
+
+                                <span>
+                                    Starting Amount
+                                </span>
+
+                                <strong id="startingAmountResult">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="result-metric">
+
+                                <span>
+                                    Final Amount
+                                </span>
+
+                                <strong id="finalAmountResult">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="result-metric">
+
+                                <span>
+                                    Potential Profit
+                                </span>
+
+                                <strong id="profitResult">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="result-metric">
+
+                                <span>
+                                    Return
+                                </span>
+
+                                <strong id="profitPercentageResult">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="disclaimer"
+                            id="disclaimer"
+                        >
+                            The result represents a theoretical opportunity
+                            before transaction fees, bid-ask spread,
+                            slippage and other market costs.
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- GRAPH VISUALIZATION -->
+
+                <section class="panel graph-panel" id="graph">
+
+                    <div class="panel-header">
+                        <div>
+                            <span class="section-kicker">GRAPH</span>
+                            <h3>Currency Exchange Graph</h3>
+                            <p>Each currency is a vertex and each exchange rate is a directed edge. The detected arbitrage cycle is highlighted after analysis.</p>
+                        </div>
+                        <div class="graph-status" id="graphStatus"><span class="graph-status-dot"></span> GRAPH READY</div>
+                    </div>
+
+                    <div class="graph-container" id="graphContainer">
+                        <svg id="currencyGraph" viewBox="0 0 900 520" role="img" aria-label="Currency exchange graph"></svg>
+                        <div class="graph-empty" id="graphEmpty">
+                            <div class="graph-empty-icon">◎</div>
+                            <h4>Currency Graph</h4>
+                            <p>Load the demo data or edit the matrix to update the exchange network.</p>
+                        </div>
+                    </div>
+
+                    <div class="graph-legend">
+                        <span><i class="legend-dot normal"></i> Currency</span>
+                        <span><i class="legend-dot arbitrage"></i> Arbitrage Cycle</span>
+                        <span><i class="legend-line"></i> Exchange Rate</span>
+                    </div>
+
+                </section>
+
+
+                <!-- ALGORITHM PANEL -->
+
+                <section class="panel algorithm-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <span class="section-kicker">
+                                ALGORITHM
+                            </span>
+
+                            <h3>
+                                Bellman-Ford Execution
+                            </h3>
+
+                            <p>
+                                How the exchange network is analyzed.
+                            </p>
+                        </div>
+
+                        <span class="complexity-badge">
+                            O(VE)
+                        </span>
+
+                    </div>
+
+
+                    <div class="pipeline">
+
+                        <div class="pipeline-step">
+                            <span>01</span>
+                            <strong>Currency Graph</strong>
+                            <small>
+                                Currency = vertex
+                            </small>
+                        </div>
+
+                        <div class="pipeline-arrow">→</div>
+
+                        <div class="pipeline-step">
+                            <span>02</span>
+                            <strong>−log(rate)</strong>
+                            <small>
+                                Convert weights
+                            </small>
+                        </div>
+
+                        <div class="pipeline-arrow">→</div>
+
+                        <div class="pipeline-step">
+                            <span>03</span>
+                            <strong>Relax Edges</strong>
+                            <small>
+                                V − 1 iterations
+                            </small>
+                        </div>
+
+                        <div class="pipeline-arrow">→</div>
+
+                        <div class="pipeline-step">
+                            <span>04</span>
+                            <strong>Cycle Check</strong>
+                            <small>
+                                Detect negative cycle
+                            </small>
+                        </div>
+
+                        <div class="pipeline-arrow">→</div>
+
+                        <div class="pipeline-step">
+                            <span>05</span>
+                            <strong>Profit</strong>
+                            <small>
+                                Calculate return
+                            </small>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- EXPLANATION -->
+
+                <section class="explanation-grid">
+
+                    <article class="info-card">
+
+                        <span class="section-kicker">
+                            CONCEPT
+                        </span>
+
+                        <h3>
+                            Why a negative cycle?
+                        </h3>
+
+                        <p>
+                            Currency conversion is multiplicative,
+                            while graph algorithms operate on additive
+                            edge weights.
+                        </p>
+
+                        <div class="mini-formula">
+                            r₁ × r₂ × r₃ &gt; 1
+                        </div>
+
+                        <p>
+                            Applying the negative logarithm transforms
+                            a profitable multiplication cycle into a
+                            negative-weight cycle.
+                        </p>
+
+                    </article>
+
+
+                    <article class="info-card">
+
+                        <span class="section-kicker">
+                            COMPLEXITY
+                        </span>
+
+                        <h3>
+                            Bellman-Ford
+                        </h3>
+
+                        <div class="complexity-display">
+                            <strong>O(VE)</strong>
+                        </div>
+
+                        <p>
+                            V represents the number of currencies and
+                            E represents the number of directed exchange
+                            edges.
+                        </p>
+
+                    </article>
+
+
+                    <article class="info-card">
+
+                        <span class="section-kicker">
+                            LIMITATIONS
+                        </span>
+
+                        <h3>
+                            Real-world costs
+                        </h3>
+
+                        <p>
+                            A detected cycle represents a potential
+                            opportunity. Transaction fees, spreads,
+                            slippage, liquidity and latency can affect
+                            actual profitability.
+                        </p>
+
+                    </article>
+
+                </section>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="site-footer">
+
+        <div class="container footer-content">
+
+            <div>
+                <strong>
+                    Currency Arbitrage Detector
+                </strong>
+
+                <span>
+                    Bellman-Ford Negative Cycle Analysis
+                </span>
+            </div>
+
+            <span>
+                College PBL Project
+            </span>
+
+        </div>
+
+    </footer>
+
+
+    <script src="js/app.js"></script>
+
+</body>
+</html>
