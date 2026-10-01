@@ -19,25 +19,11 @@ def validate_rates(rates: Dict[str, Dict[str, float]]) -> List[str]:
         raise ArbitrageError("At least two currencies are required.")
 
     currencies = list(rates.keys())
-    currency_set = set(currencies)
-
     for currency, targets in rates.items():
         if not isinstance(currency, str) or not currency.strip():
             raise ArbitrageError("Currency names must be non-empty strings.")
         if not isinstance(targets, dict):
             raise ArbitrageError("Each currency must contain a rate object.")
-
-        expected_targets = currency_set - {currency}
-        actual_targets = set(targets.keys()) - {currency}
-        missing_targets = expected_targets - actual_targets
-        unknown_targets = actual_targets - currency_set
-
-        if unknown_targets:
-            unknown = sorted(unknown_targets)[0]
-            raise ArbitrageError(f"Unknown target currency: {unknown}.")
-        if missing_targets:
-            missing = sorted(missing_targets)[0]
-            raise ArbitrageError(f"Missing exchange rate: {currency} → {missing}.")
 
         for target, rate in targets.items():
             if target not in rates:
@@ -159,11 +145,6 @@ def calculate_profit(amount: float, product: float) -> dict:
         raise ArbitrageError("Starting amount must be greater than 0.")
 
     final_amount = amount * product
-    if not math.isfinite(final_amount):
-        raise ArbitrageError(
-            "Calculated final amount exceeds the supported numeric range."
-        )
-
     profit = final_amount - amount
     return {
         "starting_amount": amount,

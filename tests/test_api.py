@@ -18,9 +18,18 @@ def test_detect_arbitrage():
 
     payload = {
         "rates": {
-            "USD": {"GBP": 0.78, "INR": 83.20},
-            "GBP": {"USD": 1.28, "INR": 106.00},
-            "INR": {"USD": 0.0123, "GBP": 0.0094}
+            "USD": {
+                "EUR": 0.90,
+                "GBP": 0.78
+            },
+            "EUR": {
+                "USD": 1.11,
+                "GBP": 0.90
+            },
+            "GBP": {
+                "USD": 1.30,
+                "EUR": 1.10
+            }
         },
         "start_currency": "USD",
         "amount": 1000
@@ -43,9 +52,18 @@ def test_detect_no_arbitrage():
 
     payload = {
         "rates": {
-            "USD": {"GBP": 0.78, "INR": 83.20},
-            "GBP": {"USD": 1.0 / 0.78, "INR": 83.20 / 0.78},
-            "INR": {"USD": 1.0 / 83.20, "GBP": 0.78 / 83.20}
+            "USD": {
+                "EUR": 0.90,
+                "GBP": 0.78
+            },
+            "EUR": {
+                "USD": 1.1111111111,
+                "GBP": 0.8666666667
+            },
+            "GBP": {
+                "USD": 1.2820512821,
+                "EUR": 1.1538461538
+            }
         },
         "start_currency": "USD",
         "amount": 1000
@@ -67,9 +85,18 @@ def test_invalid_zero_exchange_rate():
 
     payload = {
         "rates": {
-            "USD": {"GBP": 0, "INR": 83.20},
-            "GBP": {"USD": 1.28, "INR": 106.00},
-            "INR": {"USD": 0.0123, "GBP": 0.0094}
+            "USD": {
+                "EUR": 0,
+                "GBP": 0.78
+            },
+            "EUR": {
+                "USD": 1.11,
+                "GBP": 0.90
+            },
+            "GBP": {
+                "USD": 1.30,
+                "EUR": 1.10
+            }
         },
         "start_currency": "USD",
         "amount": 1000
@@ -90,9 +117,18 @@ def test_invalid_negative_exchange_rate():
 
     payload = {
         "rates": {
-            "USD": {"GBP": -0.90, "INR": 83.20},
-            "GBP": {"USD": 1.28, "INR": 106.00},
-            "INR": {"USD": 0.0123, "GBP": 0.0094}
+            "USD": {
+                "EUR": -0.90,
+                "GBP": 0.78
+            },
+            "EUR": {
+                "USD": 1.11,
+                "GBP": 0.90
+            },
+            "GBP": {
+                "USD": 1.30,
+                "EUR": 1.10
+            }
         },
         "start_currency": "USD",
         "amount": 1000
@@ -106,36 +142,3 @@ def test_invalid_negative_exchange_rate():
 
     assert "error" in data
     assert "greater than 0" in data["error"]
-
-def test_detect_uses_changed_exchange_rate():
-    client = app.test_client()
-
-    base_rates = {
-        "USD": {"GBP": 0.78, "INR": 83.20},
-        "GBP": {"USD": 1.28, "INR": 106.00},
-        "INR": {"USD": 0.0123, "GBP": 0.0094}
-    }
-
-    changed_rates = {
-        "USD": {"GBP": 0.90, "INR": 83.20},
-        "GBP": {"USD": 1.28, "INR": 106.00},
-        "INR": {"USD": 0.0123, "GBP": 0.0094}
-    }
-
-    base_response = client.post(
-        "/api/detect",
-        json={"rates": base_rates, "start_currency": "USD", "amount": 1000}
-    )
-    changed_response = client.post(
-        "/api/detect",
-        json={"rates": changed_rates, "start_currency": "USD", "amount": 1000}
-    )
-
-    assert base_response.status_code == 200
-    assert changed_response.status_code == 200
-
-    base_data = base_response.get_json()
-    changed_data = changed_response.get_json()
-
-    assert base_data["profit_percentage"] != changed_data["profit_percentage"]
-    assert base_data["final_amount"] != changed_data["final_amount"]

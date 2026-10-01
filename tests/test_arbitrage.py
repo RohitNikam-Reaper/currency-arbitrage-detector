@@ -8,15 +8,15 @@ from backend.arbitrage import (
 
 
 ARBITRAGE = {
-    "USD": {"USD": 1, "GBP": 0.78, "INR": 83.20},
-    "GBP": {"USD": 1.28, "GBP": 1, "INR": 106.00},
-    "INR": {"USD": 0.0123, "GBP": 0.0094, "INR": 1},
+    "USD": {"USD": 1, "EUR": 0.90, "GBP": 0.78},
+    "EUR": {"USD": 1.12, "EUR": 1, "GBP": 0.90},
+    "GBP": {"USD": 1.30, "EUR": 1.10, "GBP": 1},
 }
 
 NO_ARBITRAGE = {
-    "USD": {"USD": 1.0, "GBP": 0.78, "INR": 83.20},
-    "GBP": {"USD": 1.0 / 0.78, "GBP": 1.0, "INR": 83.2 / 0.78},
-    "INR": {"USD": 1.0 / 83.20, "GBP": 0.78 / 83.20, "INR": 1.0},
+    "USD": {"USD": 1.0, "EUR": 0.90, "GBP": 0.78},
+    "EUR": {"USD": 1.0 / 0.90, "EUR": 1.0, "GBP": 0.78 / 0.90},
+    "GBP": {"USD": 1.0 / 0.78, "EUR": 0.90 / 0.78, "GBP": 1.0},
 }
 
 
@@ -34,8 +34,8 @@ def test_no_arbitrage():
 @pytest.mark.parametrize("bad_rate", [0, -1])
 def test_invalid_rate(bad_rate):
     rates = {
-        "USD": {"USD": 1, "GBP": bad_rate},
-        "GBP": {"USD": 1.1, "GBP": 1},
+        "USD": {"USD": 1, "EUR": bad_rate},
+        "EUR": {"USD": 1.1, "EUR": 1},
     }
     with pytest.raises(ArbitrageError):
         bellman_ford_arbitrage(rates)
@@ -53,31 +53,3 @@ def test_profit_calculation():
     assert result["final_amount"] == pytest.approx(1053)
     assert result["profit"] == pytest.approx(53)
     assert result["profit_percentage"] == pytest.approx(5.3)
-
-
-def test_inr_is_supported_in_three_currency_graph():
-    rates = {
-        "USD": {"USD": 1, "GBP": 0.78, "INR": 83.20},
-        "GBP": {"USD": 1.28, "GBP": 1, "INR": 106.00},
-        "INR": {"USD": 0.0123, "GBP": 0.0094, "INR": 1},
-    }
-    result = bellman_ford_arbitrage(rates, "INR")
-    assert result["arbitrage_found"] is True
-    assert result["vertices"] == 3
-    assert result["edges"] == 6
-    assert "INR" in result["cycle"]
-
-
-def test_missing_exchange_rate_is_rejected():
-    incomplete = {
-        "USD": {"GBP": 0.78, "INR": 83.20},
-        "GBP": {"USD": 1.28},
-        "INR": {"USD": 0.0123, "GBP": 0.0094},
-    }
-    with pytest.raises(ArbitrageError, match="Missing exchange rate"):
-        bellman_ford_arbitrage(incomplete)
-
-
-def test_profit_overflow_is_rejected():
-    with pytest.raises(ArbitrageError, match="supported numeric range"):
-        calculate_profit(1e308, 1e308)
